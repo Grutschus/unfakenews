@@ -31,7 +31,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"JuanBlanco.solidity"
+				"trufflesuite-csi.truffle-vscode"
 			]
 		}
 	}
