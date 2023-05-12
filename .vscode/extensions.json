@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "withfig.fig",
+        "github.copilot",
+        "github.vscode-pull-request-github",
+        "eamodio.gitlens",
+        "yzhang.markdown-all-in-one",
+        "davidanson.vscode-markdownlint"
+    ]
+}
