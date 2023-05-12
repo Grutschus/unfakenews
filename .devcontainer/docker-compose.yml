@@ -28,4 +28,4 @@ services:
     image: trufflesuite/ganache:latest
     ports:
       - "8545:8545"
-    command: --port 8545
+    command: --port 8545 --server.ws --wallet.deterministic
