@@ -33,7 +33,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"trufflesuite-csi.truffle-vscode"
+				"trufflesuite-csi.truffle-vscode",
+				"GitHub.copilot"
 			]
 		}
 	}
