@@ -28,14 +28,6 @@ classDiagram
         + address
     }
 
-    class Blockchain{
-        
-        + addNewsElement()
-        + getNewsElement()
-        + getNewsElementOwner()
-    }
-
     NewsElement <|-- Owner
-    Blockchain <|-- NewsElement
-    Blockchain <|-- Owner
+
 ```
