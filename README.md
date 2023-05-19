@@ -6,10 +6,10 @@ This project introduce a way to validate news articles using Blockchain technolo
 ### General Idea
 ```mermaid
 graph LR;
-    NewsElement["`News Element
-    <small>*text, image, video*</small>`"];
-    Owner["`Owner
-    <small>*person, company, group*</small>`"];
+    NewsElement["News Element
+    <small><i>text, image, video</i></small>"];
+    Owner["Owner
+    <small><i>person, company, group</i></small>"];
 
     Owner-- owns -->NewsElement;
 
@@ -38,7 +38,4 @@ classDiagram
     NewsElement <|-- Owner
     Blockchain <|-- NewsElement
     Blockchain <|-- Owner
-```
-
-
 ```
