@@ -37,11 +37,7 @@
 				"GitHub.copilot",
 				"bierner.markdown-mermaid"
 			],
-			"settings": {
-				"solidity.remappings": [
-					"@openzeppelin=../node_modules/@openzeppelin"
-				]
-			}
+			"settings": {}
 		}
 	}
 }
