@@ -103,6 +103,14 @@ module.exports = {
     // }
   },
 
+  environments: {
+    development: {
+      ipfs: {
+        address: 'https://ipfs.infura.io:5001',
+      }
+    }
+  },
+
   // Set default mocha options here, use special reporters, etc.
   mocha: {
     // timeout: 100000

@@ -6,7 +6,7 @@ contract("NewsNFT", (accounts) => {
         const newsNFT = await NewsNFT.deployed();
         const owner = accounts[0];
 
-        const transaction = await newsNFT.safeMint("test");
+        const transaction = await newsNFT.createNewsItem("test", { from: owner });
         const logs = transaction.logs;
         const tokenId = logs[0].args.tokenId.toNumber();
 
@@ -19,7 +19,7 @@ contract("NewsNFT", (accounts) => {
         const owner = accounts[0];
 
         // mint NFT
-        await newsNFT.safeMint("test");
+        await newsNFT.createNewsItem("test", { from: owner });
 
         // check owner
         const tokenOwner = await newsNFT.ownerOf(0);
@@ -33,7 +33,7 @@ contract("NewsNFT", (accounts) => {
         const receiver = accounts[1];
 
         // mint NFT
-        await newsNFT.safeMint("test", { from: owner });
+        await newsNFT.createNewsItem("test", { from: owner });
 
         // transfer NFT
         await truffleAssert.reverts(

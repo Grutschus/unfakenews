@@ -9,24 +9,73 @@ contract NewsNFT is ERC721URIStorage, Ownable {
     using Counters for Counters.Counter;
 
     Counters.Counter private _tokenIdCounter;
+    mapping(uint256 => VerificationState) private _verificationStates;
+
+    enum VerificationState {
+        Unverified,
+        VerifiedTrue,
+        VerifiedFalse
+    }
 
     constructor() ERC721("NewsNFT", "NNFT") {}
 
     function _baseURI() internal pure override returns (string memory) {
-        // TODO: Replace with IPFS hash
+        // TODO: Replace with IPFS
         return "http://placehold.it/120x120&text=";
     }
 
     /**
-     * @dev Creates a new NewsNFT and mints it to the caller.
-     * @param uri The URI of the token metadata.
+     * @dev Returns the verification state of the NewsNFT.
+     * @param tokenId ID of the token to check
      */
-    function safeMint(string memory uri) public {
+    function getVerificationState(
+        uint256 tokenId
+    ) public view returns (VerificationState) {
+        require(
+            _exists(tokenId),
+            "NewsNFT: VerificationState query for nonexistent token"
+        );
+        return _verificationStates[tokenId];
+    }
+
+    /**
+     * @dev Sets the verification state of the NewsNFT.
+     *
+     * Requirements:
+     *
+     * - `tokenId` must exist.
+     */
+    function setVerificationState(
+        uint256 tokenId,
+        VerificationState state
+    ) public onlyOwner {
+        _setVerificationState(tokenId, state);
+    }
+
+    function _setVerificationState(
+        uint256 tokenId,
+        VerificationState state
+    ) internal {
+        require(
+            _exists(tokenId),
+            "NewsNFT: VerificationState set of nonexistent token"
+        );
+        _verificationStates[tokenId] = state;
+    }
+
+    /**
+     * @dev Creates a new NewsNFT and mints it to the caller.
+     * @param file_hash IPFS hash of the metadata file
+     */
+    // TODO: Payable?
+    function createNewsItem(string memory file_hash) public returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+
         _safeMint(msg.sender, tokenId);
-        // TODO: Store Metadata onchain
-        _setTokenURI(tokenId, uri);
+        _setTokenURI(tokenId, file_hash);
+        _setVerificationState(tokenId, VerificationState.Unverified);
+        return tokenId;
     }
 
     /**
@@ -50,9 +99,6 @@ contract NewsNFT is ERC721URIStorage, Ownable {
         super._burn(tokenId);
     }
 
-    /**
-     * @dev
-     */
     function tokenURI(
         uint256 tokenId
     ) public view override(ERC721URIStorage) returns (string memory) {
