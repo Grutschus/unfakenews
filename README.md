@@ -4,7 +4,11 @@
 
 This project introduce a way to validate news articles using Blockchain technology.
 
-### Class Diagram
+## Setup
+Using VSCode is recommended. If you are using VSCode, you can start immediately by opening the project folder in VSCode, installing Remote Development extension, and launchin the devcontainer in this workspace.
+
+
+## Class Diagram
 
 ```mermaid
 classDiagram

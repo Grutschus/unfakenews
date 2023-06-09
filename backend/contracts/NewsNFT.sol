@@ -67,7 +67,6 @@ contract NewsNFT is ERC721URIStorage, Ownable {
      * @dev Creates a new NewsNFT and mints it to the caller.
      * @param file_hash IPFS hash of the metadata file
      */
-    // TODO: Payable?
     function createNewsItem(string memory file_hash) public returns (uint256) {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
