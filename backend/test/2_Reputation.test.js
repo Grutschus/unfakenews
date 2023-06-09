@@ -61,6 +61,7 @@ contract("Reputation", (accounts) => {
          *  - How do we initialize the reputation system?
          *  - How do use the reputation in the voting system?
         */
+        assert.equal(true, false, "Not implemented");
     });
 
     // TODO: Add additional tests
