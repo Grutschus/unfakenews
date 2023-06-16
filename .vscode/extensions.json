@@ -5,6 +5,8 @@
         "github.vscode-pull-request-github",
         "eamodio.gitlens",
         "yzhang.markdown-all-in-one",
-        "davidanson.vscode-markdownlint"
+        "davidanson.vscode-markdownlint",
+        "github.copilot-nightly",
+        "github.copilot-chat"
     ]
 }

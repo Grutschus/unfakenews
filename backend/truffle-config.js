@@ -67,7 +67,7 @@ module.exports = {
     development: {
       host: "ganache",     // Localhost (default: none)
       port: 8545,            // Standard Ethereum port (default: none)
-      network_id: "*",       // Any network (default: none)
+      network_id: "5778",       // Any network (default: none)
     },
     ganache_gui: {
       host: "host.docker.internal",

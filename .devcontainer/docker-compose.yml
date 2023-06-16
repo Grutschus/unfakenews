@@ -17,12 +17,6 @@ services:
     command: sleep infinity
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # Uncomment the next four lines if you will use a ptrace-based debuggers like C++, Go, and Rust.
-    # cap_add:
-    #  - SYS_PTRACE
-    # security_opt:
-    #   - seccomp:unconfined
-
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
@@ -30,4 +24,20 @@ services:
     image: trufflesuite/ganache:latest
     ports:
       - "8545:8545"
-    command: --port 8545 --server.ws --wallet.deterministic
+    command: --port 8545 --server.ws --wallet.deterministic --chain.networkId=5778
+  ipfs:
+    image: ipfs/kubo:latest
+    ports:
+      - "5001:5001"
+      - "8080:8080"
+      - "4001:4001" # Needed for communication between nodes
+    # entrypoint:
+    #   - /bin/sh
+    #   - -c
+    #   - (ipfs init && ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '["*"]' && ipfs config --json Addresses.API '"/ip4/0.0.0.0/tcp/5001"' && ipfs config --json Addresses.Gateway '"/ip4/0.0.0.0/tcp/8080"' && ipfs bootstrap rm --all && ipfs daemon) || ipfs daemon
+    environment:
+      - IPFS_PROFILE=lowpower
+      - ipfs_data=/ipfs/ipfsdata
+      - ipfs_staging=/ipfs/ipfsstaging
+    volumes:
+      - ../ipfs:/ipfs

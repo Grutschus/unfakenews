@@ -1,2 +1,6 @@
 node_modules
 build
+ipfs/*
+!ipfs/.gitkeep
+*.egg-info
+**__pycache__/
