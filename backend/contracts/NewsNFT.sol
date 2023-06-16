@@ -21,7 +21,7 @@ contract NewsNFT is ERC721URIStorage, Ownable {
 
     function _baseURI() internal pure override returns (string memory) {
         // TODO: Replace with IPFS
-        return "http://placehold.it/120x120&text=";
+        return "localhost:8080/ipfs/";
     }
 
     /**
