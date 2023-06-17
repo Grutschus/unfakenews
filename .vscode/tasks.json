@@ -1,0 +1,51 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+    },
+    "tasks": [
+        {
+            "label": "Start unfakenews",
+            "dependsOn": [
+                "wallet-connect",
+                "streamlit",
+                "truffle"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "wallet-connect",
+            "type": "shell",
+            "command": "npm run start",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/streamlit-unfakenews-metamask/wallet_connect/frontend"
+            },
+            "isBackground": true
+        },
+        {
+            "label": "streamlit",
+            "type": "shell",
+            "command": "streamlit run index.py",
+            "options": {
+                "cwd": "${workspaceFolder}/frontend/"
+            },
+            "isBackground": true
+        },
+        {
+            "label": "truffle",
+            "type": "shell",
+            "command": "truffle console",
+            "options": {
+                "cwd": "${workspaceFolder}/backend/"
+            },
+            "isBackground": true
+        }
+    ]
+}
