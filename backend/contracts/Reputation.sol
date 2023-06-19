@@ -22,11 +22,17 @@ contract Reputation is ERC20, ERC20Votes, Ownable {
     ) internal virtual override(ERC20) {
         super._beforeTokenTransfer(from, to, amount);
 
-        // Disable transfers, only minting and burning allowed
-        if (from != address(0) && to != address(0)) {
-            revert("Reputation: Token transfers are not allowed");
-        }
+        // currently disabled transfers, only minting and burning allowed
+        //to Do: enable transfers, achieved by outcommenting the following lines
+        // if (from != address(0) && to != address(0)) {
+            // revert("Reputation: Token transfers are not allowed");
+        // }
     }
+
+    function transfer(address from, address to, uint256 amount) public onlyOwner {
+        _transfer(from, to, amount);
+    }
+
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
@@ -42,6 +48,10 @@ contract Reputation is ERC20, ERC20Votes, Ownable {
         uint256 amount
     ) internal override(ERC20, ERC20Votes) {
         super._afterTokenTransfer(from, to, amount);
+    }
+
+    function _transfer(from, to, amount) internal override(ERC20, ERC20Votes) {
+        super._transfer(from, to, amount);
     }
 
     function _mint(

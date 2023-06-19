@@ -17,6 +17,22 @@ contract("Unfakenews", (accounts) => {
 
     it("a vote should be counted", async () => {
         // Only when vote is open
+        // Only when voter has reputation
+        // Only when voter has not voted yet
+
+        // Positive test
+        await unfakenews.vote(1, true, { from: alice });
+        const vote = await unfakenews.votes(1);
+        assert.equal(vote.votesFor, 1, "votesFor should be 1");
+
+        // Negative test
+        await truffleAssert.reverts(
+            unfakenews.vote(1, true, { from: alice }),
+            "Unfakenews: You have already voted"
+        );
+
+        
+
     });
 
 
