@@ -4,9 +4,17 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./ItheGovernor.sol";
 
 contract Reputation is ERC20, ERC20Votes, Ownable {
-    constructor() ERC20("Reputation", "RPT") ERC20Permit("Reputation") {}
+    address public governorAddress;
+
+    constructor(address _governorAddress) ERC20("Reputation", "RPT") ERC20Permit("Reputation") {
+        require(ItheGovernor(_governorAddress).isGovernor(), "Only a governor can construct this contract");
+        governorAddress = _governorAddress;
+    }
+
+
 
     /**
      * @dev We don't need fractions of reputation
