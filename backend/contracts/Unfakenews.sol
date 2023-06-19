@@ -19,6 +19,8 @@ contract Unfakenews is
 
     Reputation private immutable reputationToken;
 
+    uint256 private totalEligibleVoters;
+
     struct Proposal {
         uint256 forVotes;
         uint256 againstVotes;
@@ -26,10 +28,13 @@ contract Unfakenews is
         mapping(address => uint256) reputationStaked;
         address[] votersFor;
         address[] votersAgainst;
+        uint256 nftId;
     }
 
     mapping(uint256 => Proposal) private _proposals;
     uint256 private _proposalCount;
+
+    event VoteRequested(uint256 proposalId, uint256 nftId);
 
     constructor(
         Reputation _token
@@ -41,6 +46,61 @@ contract Unfakenews is
     {
         reputationToken = _token;
     }
+
+    // get toal eligible voters at beginning of voting period
+    function getTotalEligibleVoters() internal view returns (uint256) {
+
+        uint256 totalAddresses = reputationToken.balanceOf(address(this));
+
+        for (uint256 i = 0; i < totalAddresses; i++) {
+            address voter = reputationToken.tokenOfOwnerByIndex(address(this), i);
+            uint256 voterReputation = reputationToken.balanceOf(voter);
+
+            if (voterReputation > 1e3) {
+                totalEligibleVoters++;
+            }
+        }
+
+    return totalEligibleVoters;
+    }
+
+    function requestVoteForNFT(uint256 nftId) external {
+
+        // Perform necessary validations or checks here
+        uint256 totalReputation = reputationToken.totalSupply();
+        uint256 callerReputation = reputationToken.balanceOf(msg.sender);
+        
+        if (totalReputation > 1e6) {
+            require(callerReputation >= 1e3, "Insufficient reputation");
+        }
+
+        
+        // Create a new proposal
+        uint256 proposalId = _createProposal();
+
+        // Store additional information related to the NFT in the proposal, if needed
+        _proposals[proposalId].nftId = nftId;
+
+        // Emit an event to indicate that a vote has been requested for the NFT
+        emit VoteRequested(proposalId, nftId);
+    }
+
+    function _createProposal() internal returns (uint256) {
+        uint256 proposalId = _proposalCount;
+        _proposalCount++;
+
+        // Initialize the proposal struct and any other necessary variables
+        _proposals[proposalId].forVotes = 0;
+        _proposals[proposalId].againstVotes = 0;
+        _proposals[proposalId].executed = false;
+
+        // Set totalEligibleVoters to the current total number of eligible voters
+        totalEligibleVoters = getTotalEligibleVoters();
+        
+        return proposalId;
+    }
+
+    
 
     
     function voteFor(uint256 proposalId, uint256 reputationStake) external {
@@ -123,18 +183,22 @@ contract Unfakenews is
         override(IGovernor, GovernorSettings)
         returns (uint256)
     {
-        return super.votingPeriod();
+        // Set the minimum voting period to 7 days
+        return 7 days;
     }
 
     function quorum(
-        uint256 blockNumber
     )
         public
         view
         override(IGovernor, GovernorVotesQuorumFraction)
         returns (uint256)
     {
-        return super.quorum(blockNumber);
+        // Set the quorum to 30% of the total number of eligible voters
+        uint256 quorumPercentage = 30;
+        uint256 quorumVotes = (totalEligibleVoters * quorumPercentage) / 100;
+
+        return quorumVotes;
     }
 
     function proposalThreshold()
