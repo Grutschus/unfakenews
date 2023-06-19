@@ -51,4 +51,9 @@ contract("NewsNFT", (accounts) => {
         const state = await newsNFT.getVerificationState(aliceTokenID);
         assert.equal(state, 1, "state should be verified (1)");
     });
+
+
+    it("given a URI, the correct tokenID can be retrieved", async () => {
+        // Get the tokenID for the URI
+    });
 })

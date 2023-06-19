@@ -56,13 +56,7 @@ contract("Reputation", (accounts) => {
         await reputation.burn(alice, 10, { from: contractOwner });
     });
 
-    it("anyone should have an initial balance of 10", async () => {
-        /** TODO: This is not feasible to implement
-         *  - How do we initialize the reputation system?
-         *  - How do use the reputation in the voting system?
-        */
-        assert.equal(true, false, "Not implemented");
-    });
+
 
     // TODO: Add additional tests
 

@@ -11,9 +11,14 @@ from wallet_connect import wallet_connect
 from ipfs import add_image_to_ipfs, add_nft_to_ipfs
 
 # Session handling
-
+if "mint_news_nft" not in st.session_state:
+    st.session_state["mint_news_nft"] = {"status": -2}
 
 st.title("Unfakenews 🗞️")
+
+wallet_connect(label="wallet", key="wallet", message="Connect your wallet")
+if st.session_state.get("wallet"):
+    st.caption(f"Currently connected to: {st.session_state.get('wallet')}")
 
 st.divider()
 
@@ -70,13 +75,26 @@ if st.session_state.get("news_nft_submit"):
     st.success("NFT created successfully!")
     st.caption("NFT CID: " + nft_cid)
 
-if st.session_state.get("news_nft_cid") and not st.session_state.get("mint_news_nft"):
+if (
+    st.session_state.get("news_nft_cid") is not None
+    and st.session_state.get("mint_news_nft").get("status") == -2
+):
     nft_cid = st.session_state.get("news_nft_cid")
     wallet_connect(
         label="mint_news_nft", key="mint_news_nft", uri=nft_cid, message="Sign the transaction"
     )
 
-if st.session_state.get("mint_news_nft"):
+if st.session_state.get("mint_news_nft").get("status") == -1:
+    bar = st.progress(0, "Waiting for transaction to be mined...")
+    timeout = 0
+    while st.session_state.get("mint_news_nft").get("status") == -1:
+        sleep(1)
+        bar.progress(timeout, "Waiting for transaction to be mined...")
+        timeout += 1
+        if timeout >= 100:
+            st.error("Transaction timed out!")
+            break
+elif st.session_state.get("mint_news_nft").get("status") != -1:
     receipt = st.session_state.get("mint_news_nft")
     if receipt.get("status") == 1:
         st.success("NFT minted successfully!")
@@ -84,6 +102,7 @@ if st.session_state.get("mint_news_nft"):
             f"Transaction Hash: {receipt.get('transactionHash')} \n"
             f"Token ID: {receipt.get('tokenId')}"
         )
-    else:
+    elif receipt.get("status") == 0:
         st.error("NFT minting failed!")
         st.caption(f"Receipt: {receipt}")
+

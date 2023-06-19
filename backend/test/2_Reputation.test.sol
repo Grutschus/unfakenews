@@ -10,5 +10,6 @@ import "../contracts/NewsNFT.sol";
  * @dev
  */
 contract TestReputation {
+    
 
 }

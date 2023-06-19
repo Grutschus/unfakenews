@@ -24,7 +24,7 @@ services:
     image: trufflesuite/ganache:latest
     ports:
       - "8545:8545"
-    command: --port 8545 --server.ws --wallet.deterministic --chain.networkId=5778
+    command: --port 8545 --server.ws --wallet.deterministic --chain.networkId=5778 --miner.blockTime=10
   ipfs:
     image: ipfs/kubo:latest
     ports:
