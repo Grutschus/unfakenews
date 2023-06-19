@@ -7,11 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./ItheGovernor.sol";
 
 contract Reputation is ERC20, ERC20Votes, Ownable {
-    address public governorAddress;
 
-    constructor(address _governorAddress) ERC20("Reputation", "RPT") ERC20Permit("Reputation") {
-        require(ItheGovernor(_governorAddress).isGovernor(), "Only a governor can construct this contract");
-        governorAddress = _governorAddress;
+
+    constructor() ERC20("Reputation", "RPT") ERC20Permit("Reputation") {
     }
 
 
@@ -35,6 +33,16 @@ contract Reputation is ERC20, ERC20Votes, Ownable {
             revert("Reputation: Token transfers are not allowed");
         }
     }
+
+    /**
+     * @dev Mint reputation tokens and emit events for burning and minting. Good practice 
+     * @param to The address to mint tokens to
+     * @param amount The amount of tokens to mint
+     */
+
+    event TokensMinted(address indexed to, uint256 amount);
+    event TokensBurned(address indexed from, uint256 amount);
+
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
