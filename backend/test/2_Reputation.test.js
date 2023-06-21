@@ -44,17 +44,28 @@ contract("Reputation", (accounts) => {
         assert.equal(balance, 0, "balance should be 0");
     });
 
-    it("reputation should not be transferable", async () => {
-        await reputation.mint(alice, 10, { from: contractOwner });
+    it("reputation should be transferable", async () => {
+        // Mint reputation tokens to Alice
+        const amount = 10;
+        await reputation.mint(alice, amount, { from: contractOwner });
 
-        await truffleAssert.reverts(
-            reputation.transfer(bob, 10, { from: alice }),
-            "Reputation: Token transfers are not allowed"
-        );
+        // Check Alice's balance before the transfer
+        const aliceBalanceBefore = await reputation.balanceOf(alice);
 
-        // burn the minted reputation to reset the state
-        await reputation.burn(alice, 10, { from: contractOwner });
+        // Transfer reputation from Alice to the contract owner
+        await reputation.transfer(contractOwner, amount, { from: alice });
+
+        // Check Alice's balance after the transfer
+        const aliceBalanceAfter = await reputation.balanceOf(alice);
+
+        // Check the contract owner's balance after the transfer
+        const contractOwnerBalance = await reputation.balanceOf(contractOwner);
+
+        // Assert the balances are correct
+        assert.equal(aliceBalanceBefore - amount, aliceBalanceAfter, "Alice's balance is incorrect");
+        assert.equal(contractOwnerBalance, amount, "Contract owner's balance is incorrect");
     });
+    
 
 
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
+
+
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/IGovernor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
@@ -164,7 +166,7 @@ contract Unfakenews is
 
     function votingPeriod()
         public
-        view
+        pure
         override(IGovernor, GovernorSettings)
         returns (uint256)
     {
@@ -174,7 +176,7 @@ contract Unfakenews is
 
     function quorumNumerator()
         public
-        view
+        pure
         override(GovernorVotesQuorumFraction)
         returns (uint256)
     {
