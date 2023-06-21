@@ -3,13 +3,13 @@ pragma solidity ^0.8.9;
 
 
 
+
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/IGovernor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./Reputation.sol";
 
 contract Unfakenews is
@@ -21,8 +21,6 @@ contract Unfakenews is
 {
 
     Reputation private immutable reputationToken;
-
-    uint256 private totalEligibleVoters;
 
     struct Proposal {
         uint256 forVotes;
@@ -39,6 +37,8 @@ contract Unfakenews is
 
     event VoteRequested(uint256 proposalId, uint256 nftId);
 
+
+
     constructor(
         Reputation _token
     )
@@ -50,6 +50,7 @@ contract Unfakenews is
         reputationToken = _token;
     }
 
+    
     
 
     function requestVoteForNFT(uint256 nftId) external {
@@ -87,48 +88,52 @@ contract Unfakenews is
     }
 
     
-
+    bytes public placeholder;
     
     function voteFor(uint256 proposalId, uint256 reputationStake) external {
-        require(state(proposalId) == ProposalState.Active, "Voting is not active for this proposal");
-        require(reputationStake > 0, "Invalid reputation stake");
+        _countVote(proposalId, msg.sender, 1, reputationStake, placeholder);
 
-        Proposal storage proposal = _proposals[proposalId];
-        require(reputationToken.balanceOf(msg.sender) >= reputationStake, "Insufficient reputation balance");
-
-        reputationToken.transferFrom(msg.sender, address(this), reputationStake);
-        proposal.forVotes += reputationStake;
-        proposal.reputationStaked[msg.sender] += reputationStake;
-        proposal.votersFor.push(msg.sender);
-
+        _castVote(proposalId, reputationStake, true);
 
         emit VoteCast(msg.sender, proposalId, 1, reputationStake, "Raisin blanc");
     }
 
     function voteAgainst(uint256 proposalId, uint256 reputationStake) external {
-        require(state(proposalId) == ProposalState.Active, "Voting is not active for this proposal");
-        require(reputationStake > 0, "Invalid reputation stake");
+        _countVote(proposalId, msg.sender, 0, reputationStake, placeholder);
 
+        _castVote(proposalId, reputationStake, false);
+
+        emit VoteCast(msg.sender, proposalId, 0, reputationStake, "Raisin blanc");
+    }
+
+    function _castVote(uint256 proposalId, uint256 reputationStake, bool isForVote) internal {
         Proposal storage proposal = _proposals[proposalId];
         require(reputationToken.balanceOf(msg.sender) >= reputationStake, "Insufficient reputation balance");
 
         reputationToken.transferFrom(msg.sender, address(this), reputationStake);
-        proposal.againstVotes += reputationStake;
         proposal.reputationStaked[msg.sender] += reputationStake;
-        proposal.votersAgainst.push(msg.sender);
 
-        emit VoteCast(msg.sender, proposalId, 0, reputationStake, "Raisin blanc");
+        if (isForVote) {
+            proposal.votersFor.push(msg.sender);
+        } else {
+            proposal.votersAgainst.push(msg.sender);
+        }
     }
+
 
     function _execute(uint256 proposalId) internal {
         Proposal storage proposal = _proposals[proposalId];
         proposal.executed = true;
 
-        // Execute the proposal based on the voting results
-        if (proposal.forVotes > proposal.againstVotes) {
+        uint256 forVotes = proposal.forVotes;
+        uint256 againstVotes = proposal.againstVotes;
+
+        if (forVotes > againstVotes) {
             // Voters that voted "For" get their staked reputation back + 10%
-            for (uint256 i = 0; i < proposal.votersFor.length; i++) {
-                address voter = proposal.votersFor[i];
+            address[] storage votersFor = proposal.votersFor;
+            uint256 votersForLength = votersFor.length;
+            for (uint256 i = 0; i < votersForLength; i++) {
+                address voter = votersFor[i];
                 uint256 reputationStaked = proposal.reputationStaked[voter];
                 if (reputationStaked > 0) {
                     proposal.reputationStaked[voter] = 0;
@@ -138,8 +143,10 @@ contract Unfakenews is
             }
         } else {
             // Voters that voted "Against" get their staked reputation back - 10%
-            for (uint256 i = 0; i < proposal.votersAgainst.length; i++) {
-                address voter = proposal.votersAgainst[i];
+            address[] storage votersAgainst = proposal.votersAgainst;
+            uint256 votersAgainstLength = votersAgainst.length;
+            for (uint256 i = 0; i < votersAgainstLength; i++) {
+                address voter = votersAgainst[i];
                 uint256 reputationStaked = proposal.reputationStaked[voter];
                 if (reputationStaked > 0) {
                     proposal.reputationStaked[voter] = 0;
@@ -148,10 +155,10 @@ contract Unfakenews is
                 }
             }
         }
-        
 
         emit ProposalExecuted(proposalId);
     }
+
 
     // The following functions are overrides required by Solidity.
 
