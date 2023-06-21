@@ -50,7 +50,7 @@ contract Reputation is ERC20, ERC20Votes, Ownable {
         super._afterTokenTransfer(from, to, amount);
     }
 
-    function _transfer(from, to, amount) internal override(ERC20, ERC20Votes) {
+    function _transfer(address from, address to, uint256 amount) internal override(ERC20) {
         super._transfer(from, to, amount);
     }
 

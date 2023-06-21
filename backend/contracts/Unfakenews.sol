@@ -2,6 +2,7 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/governance/Governor.sol";
+import "@openzeppelin/contracts/governance/IGovernor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
@@ -47,22 +48,7 @@ contract Unfakenews is
         reputationToken = _token;
     }
 
-    // get toal eligible voters at beginning of voting period
-    function getTotalEligibleVoters() internal view returns (uint256) {
-
-        uint256 totalAddresses = reputationToken.balanceOf(address(this));
-
-        for (uint256 i = 0; i < totalAddresses; i++) {
-            address voter = reputationToken.tokenOfOwnerByIndex(address(this), i);
-            uint256 voterReputation = reputationToken.balanceOf(voter);
-
-            if (voterReputation > 1e3) {
-                totalEligibleVoters++;
-            }
-        }
-
-    return totalEligibleVoters;
-    }
+    
 
     function requestVoteForNFT(uint256 nftId) external {
 
@@ -94,8 +80,6 @@ contract Unfakenews is
         _proposals[proposalId].againstVotes = 0;
         _proposals[proposalId].executed = false;
 
-        // Set totalEligibleVoters to the current total number of eligible voters
-        totalEligibleVoters = getTotalEligibleVoters();
         
         return proposalId;
     }
@@ -162,6 +146,7 @@ contract Unfakenews is
                 }
             }
         }
+        
 
         emit ProposalExecuted(proposalId);
     }
@@ -187,19 +172,27 @@ contract Unfakenews is
         return 7 days;
     }
 
-    function quorum(
-    )
+    function quorumNumerator()
+        public
+        view
+        override(GovernorVotesQuorumFraction)
+        returns (uint256)
+    {
+        // The quorum numerator should be 30% of the total reputation supply
+        return 30;
+    }
+
+    function quorum(uint256 blockNumber)
         public
         view
         override(IGovernor, GovernorVotesQuorumFraction)
         returns (uint256)
     {
-        // Set the quorum to 30% of the total number of eligible voters
-        uint256 quorumPercentage = 30;
-        uint256 quorumVotes = (totalEligibleVoters * quorumPercentage) / 100;
-
-        return quorumVotes;
+        // quorumNumerator() returns the percentage of the total supply that is required for quorum
+        return super.quorum(blockNumber);
     }
+
+    
 
     function proposalThreshold()
         public
@@ -209,6 +202,7 @@ contract Unfakenews is
     {
         return super.proposalThreshold();
     }
+    
 
     
 }
