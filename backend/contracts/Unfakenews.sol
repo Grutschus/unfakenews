@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-
+# reputation possibly not implementable as seperate contract but as simple hashmap to track voter reputation mapping
 
 
 import "@openzeppelin/contracts/governance/Governor.sol";
