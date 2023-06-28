@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-# reputation possibly not implementable as seperate contract but as simple hashmap to track voter reputation mapping
+// reputation possibly not implementable as seperate contract but as simple hashmap to track voter reputation mapping
 
 
 import "@openzeppelin/contracts/governance/Governor.sol";
@@ -138,7 +138,7 @@ contract Unfakenews is
                 if (reputationStaked > 0) {
                     proposal.reputationStaked[voter] = 0;
                     uint256 amountToMint = reputationStaked + (reputationStaked / 10);
-                    reputationToken.mint(voter, amountToMint); # TODO: implement bulk mint-> give function a mapping voter to amount to mint
+                    reputationToken.mint(voter, amountToMint); // TODO: implement bulk mint-> give function a mapping voter to amount to mint
                 }
             }
         } else {
