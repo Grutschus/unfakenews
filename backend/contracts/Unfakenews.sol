@@ -138,7 +138,7 @@ contract Unfakenews is
                 if (reputationStaked > 0) {
                     proposal.reputationStaked[voter] = 0;
                     uint256 amountToMint = reputationStaked + (reputationStaked / 10);
-                    reputationToken.mint(voter, amountToMint);
+                    reputationToken.mint(voter, amountToMint); # TODO: implement bulk mint-> give function a mapping voter to amount to mint
                 }
             }
         } else {
