@@ -10,6 +10,13 @@ from wallet_connect import wallet_connect
 
 from ipfs import add_image_to_ipfs, add_nft_to_ipfs
 
+st.set_page_config(
+    page_title="Unfakenews",
+    initial_sidebar_state="collapsed",
+    page_icon="🗞️",
+)
+st.experimental_set_query_params()
+
 # Session handling
 if "mint_news_nft" not in st.session_state:
     st.session_state["mint_news_nft"] = {"status": -2}
@@ -24,14 +31,20 @@ st.divider()
 
 st.header("Upload news")
 
-st.file_uploader("Upload some news.", type=["png", "jpg", "jpeg"], key="news_nft_upload")
+st.file_uploader(
+    "Upload some news.", type=["png", "jpg", "jpeg"], key="news_nft_upload"
+)
 if st.session_state.get("news_nft_upload") is not None:
     st.image(
-        st.session_state.get("news_nft_upload"), caption="Uploaded Image.", use_column_width="auto"
+        st.session_state.get("news_nft_upload"),
+        caption="Uploaded Image.",
+        use_column_width="auto",
     )
 
 st.text_input(
-    "Title", help="Enter an expressive title of your news item here.", key="news_nft_title"
+    "Title",
+    help="Enter an expressive title of your news item here.",
+    key="news_nft_title",
 )
 
 st.text_area("Description", max_chars=400, key="news_nft_description")
@@ -69,7 +82,11 @@ if st.session_state.get("news_nft_submit"):
         cid = add_image_to_ipfs(image)
     with st.spinner("Creating NFT..."):
         sleep(1)
-        nft_meta = {"image_cid": cid, "title": title, "description": description}
+        nft_meta = {
+            "image_cid": cid,
+            "title": title,
+            "description": description,
+        }
         nft_cid = add_nft_to_ipfs(nft_meta)
     st.session_state["news_nft_cid"] = nft_cid
     st.success("NFT created successfully!")
@@ -81,7 +98,10 @@ if (
 ):
     nft_cid = st.session_state.get("news_nft_cid")
     wallet_connect(
-        label="mint_news_nft", key="mint_news_nft", uri=nft_cid, message="Sign the transaction"
+        label="mint_news_nft",
+        key="mint_news_nft",
+        uri=nft_cid,
+        message="Sign the transaction",
     )
 
 if st.session_state.get("mint_news_nft").get("status") == -1:
@@ -105,4 +125,3 @@ elif st.session_state.get("mint_news_nft").get("status") != -1:
     elif receipt.get("status") == 0:
         st.error("NFT minting failed!")
         st.caption(f"Receipt: {receipt}")
-
