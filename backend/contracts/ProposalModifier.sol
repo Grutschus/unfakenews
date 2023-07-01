@@ -89,4 +89,8 @@ contract ProposalModifier {
 
         return proposalId;
     }
+
+    function getVoters(uint256 proposalID) external view returns (address[] memory, address[] memory) {
+        return (_proposals[proposalID].votersFor, _proposals[proposalID].votersAgainst);
+    }
 }
