@@ -12,6 +12,7 @@ contract("Unfakenews", (accounts) => {
 
     beforeEach(async function () {
         unfakenews = await Unfakenews.deployed();
+        proposalmodifier = await ProposalModifier.deployed();
         contractOwner = await unfakenews.owner();
     });
 
