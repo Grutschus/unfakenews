@@ -95,7 +95,7 @@ contract Unfakenews {
         uint256 forVotes = proposal.forVotes;
         uint256 againstVotes = proposal.againstVotes;
 
-        if (forVotes > againstVotes) {
+        if (forVotes > againstVotes) {//fix this
             proposalModifier.executeProposal(proposalId);
         }
 
@@ -119,7 +119,7 @@ contract Unfakenews {
         return (totalReputation * quorumNumerator()) / 100;
     }
 
-    function proposalThreshold() public pure returns (uint256) {
+    function proposalThreshold() public pure returns (uint256) {//not necessary, done by requestVoteforNFT function
         // The proposal threshold should be 1% of the total reputation supply
         return 1;
     }
